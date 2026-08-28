@@ -53,7 +53,11 @@ The rest of the site still gets AVIF and WebP. Only the preview opts out.
 
 Output is exactly **1200×630**, the 1.91:1 card every major platform renders at
 full width. It is also wide enough for Google Discover, which wants at least
-1200 px.
+1200 px. X's `summary_large_image` accepts this ratio; a 16:9 (1200×675) card
+would be cropped by Facebook, LinkedIn and WhatsApp, which is the worse trade
+for wildlife photography. A second, platform-specific file is only worth the
+complexity if a particular unfurler is measured to crop this one badly, and
+this module does not generate one.
 
 The byte budget is **300 KB**, which is not the largest any platform accepts —
 Facebook allows 8 MB — but it is the point where WhatsApp stops showing a
@@ -118,7 +122,7 @@ or `crop: 'entropy'` for the busiest region rather than the most salient one.
 | Variable               | Default     | Meaning                                   |
 | ---------------------- | ----------- | ----------------------------------------- |
 | `OG_IMAGE_WIDTH`       | `1200`      | Card width.                               |
-| `OG_IMAGE_HEIGHT`      | `630`       | Card height. Use `675` for a 16:9 X card. |
+| `OG_IMAGE_HEIGHT`      | `630`       | Card height. Leave this at the default. |
 | `OG_IMAGE_QUALITY`     | `82`        | Starting JPEG quality.                    |
 | `OG_IMAGE_MIN_QUALITY` | `62`        | Floor for the budget search.              |
 | `OG_IMAGE_MAX_BYTES`   | `300000`    | The WhatsApp ceiling.                     |

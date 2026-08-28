@@ -134,13 +134,13 @@ describe('renderOgImage', () => {
   });
 
   it('respects a configured card size other than the default', async () => {
-    const twitter = resolveOgImageConfig({ width: 1200, height: 675 }, {});
+    const custom = resolveOgImageConfig({ width: 800, height: 418 }, {});
 
     const image = await renderOgImage(await gradientJpeg({ width: 2400, height: 1600 }), {
-      og: twitter,
+      og: custom,
     });
 
-    expect([image.width, image.height]).toEqual([1200, 675]);
+    expect([image.width, image.height]).toEqual([800, 418]);
   });
 });
 
@@ -154,14 +154,14 @@ describe('resolveOgImageConfig', () => {
   it('reads settings from the environment', () => {
     const config = resolveOgImageConfig(
       {},
-      { OG_IMAGE_WIDTH: '1200', OG_IMAGE_HEIGHT: '675', OG_IMAGE_MAX_BYTES: '250000' },
+      { OG_IMAGE_WIDTH: '1200', OG_IMAGE_HEIGHT: '800', OG_IMAGE_MAX_BYTES: '250000' },
     );
 
-    expect([config.width, config.height, config.maxBytes]).toEqual([1200, 675, 250_000]);
+    expect([config.width, config.height, config.maxBytes]).toEqual([1200, 800, 250_000]);
   });
 
   it('lets explicit overrides win over the environment', () => {
-    const config = resolveOgImageConfig({ height: 630 }, { OG_IMAGE_HEIGHT: '675' });
+    const config = resolveOgImageConfig({ height: 630 }, { OG_IMAGE_HEIGHT: '800' });
 
     expect(config.height).toBe(630);
   });
