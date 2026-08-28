@@ -64,9 +64,6 @@ describe('resolveImageConfig', () => {
   it('normalises prefixes and deduplicates widths', () => {
     const config = resolveImageConfig({
       originalPrefix: '/original/',
-      // An absolute-looking prefix is anchored to the storage root rather than
-      // rejected: storage keys are always relative, so this is a stray slash,
-      // not an attempt to reach the filesystem.
       optimizedPrefix: '/var/www/',
       additionalWidths: [1200, 800, 1200],
     });

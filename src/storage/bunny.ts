@@ -146,6 +146,11 @@ export class BunnyStorageAdapter implements StorageAdapter {
     });
   }
 
+  /**
+   * Uploads with a SHA-256 checksum header, which Bunny verifies server-side.
+   * A corrupted or truncated transfer is rejected rather than published as a
+   * broken derivative.
+   */
   async put(key: string, data: Buffer, options: PutOptions): Promise<void> {
     assertSafeKey(key);
 
@@ -156,8 +161,6 @@ export class BunnyStorageAdapter implements StorageAdapter {
         body: new Uint8Array(data),
         headers: {
           'Content-Type': options.contentType,
-          // Bunny verifies this server-side and rejects a corrupted upload,
-          // which keeps a truncated transfer from becoming a broken derivative.
           Checksum: createHash('sha256').update(data).digest('hex').toUpperCase(),
         },
       },

@@ -63,6 +63,15 @@ assets live at the root of the bucket, either point the setting at where they
 are or move them first. Files without a recognised image extension are ignored
 by design.
 
+### The migration reports a name collision
+
+Two originals in the same directory share a base name and differ only by
+extension, such as `viper.jpg` and `viper.png`. Derivative names drop the
+source extension, so both would claim `viper-2400.avif`.
+
+Both are refused rather than one silently overwriting the other. Rename one of
+the sources so the base names differ.
+
 ### Colours look washed out or oversaturated
 
 The ICC profile is being lost somewhere after this package, which keeps it

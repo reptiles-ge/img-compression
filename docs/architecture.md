@@ -62,6 +62,11 @@ applies. Making the suffix conditional would mean output names shifting the
 first time someone changes the ladder, which defeats the point of deterministic
 naming.
 
+Because derivative names drop the source extension, `viper.jpg` and `viper.png`
+in the same directory would both claim `viper-2400.avif`. The migration detects
+that before encoding and refuses both, rather than letting whichever ran second
+overwrite the first.
+
 ## Decisions worth explaining
 
 ### Two widths, not one and not eleven

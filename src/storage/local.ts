@@ -56,6 +56,11 @@ export class LocalStorageAdapter implements StorageAdapter {
     return resolved;
   }
 
+  /**
+   * Writes to a sibling temporary file and renames it into place, so a reader
+   * never observes a half-written object and an interrupted write cannot leave
+   * a truncated derivative that later looks complete.
+   */
   async put(key: string, data: Buffer, _options: PutOptions): Promise<void> {
     const destination = this.#resolve(key);
     const directory = path.dirname(destination);
@@ -63,9 +68,6 @@ export class LocalStorageAdapter implements StorageAdapter {
     try {
       await mkdir(directory, { recursive: true });
 
-      // Written to a sibling temporary file and renamed, so a reader never
-      // observes a half-written object and a crash cannot leave a truncated
-      // derivative that later looks complete.
       const temporary = path.join(
         directory,
         `.${path.basename(destination)}.${randomBytes(6).toString('hex')}.tmp`,

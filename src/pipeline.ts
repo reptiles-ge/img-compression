@@ -90,7 +90,13 @@ function buildRecord(
   }));
 
   const largestOf = (format: DerivativeFormat): StoredDerivative | undefined =>
-    derivatives.filter((derivative) => derivative.format === format).at(-1);
+    derivatives
+      .filter((derivative) => derivative.format === format)
+      .reduce<StoredDerivative | undefined>(
+        (largest, derivative) =>
+          largest === undefined || derivative.width > largest.width ? derivative : largest,
+        undefined,
+      );
 
   const largestAvif = largestOf('avif');
   const largestWebp = largestOf('webp');

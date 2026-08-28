@@ -77,6 +77,18 @@ function hasImageExtension(key: string): boolean {
   return IMAGE_EXTENSIONS.has(parseKey(key).extension);
 }
 
+function findCollidingKeys(keys: readonly string[]): Map<string, string[]> {
+  const byDerivativeBase = new Map<string, string[]>();
+
+  for (const key of keys) {
+    const { directory, baseName } = parseKey(key);
+    const base = `${directory}/${baseName}`;
+    byDerivativeBase.set(base, [...(byDerivativeBase.get(base) ?? []), key]);
+  }
+
+  return new Map([...byDerivativeBase].filter(([, sources]) => sources.length > 1));
+}
+
 function describeError(error: unknown): { message: string; code: string | null } {
   if (error instanceof ImagePipelineError) {
     return { message: error.message, code: error.code };
@@ -94,6 +106,14 @@ function describeError(error: unknown): { message: string; code: string | null }
  * original prefix and only ever adds derivatives under the optimized prefix.
  * Re-running is safe, and a second run over unchanged sources does no encoding
  * at all.
+ *
+ * Derivative names drop the source extension, so two originals differing only
+ * by extension would claim the same output key. Both are refused before any
+ * encoding rather than one silently overwriting the other.
+ *
+ * A failure is reported and the run continues, leaving that image exactly as it
+ * was. The manifest is checkpointed periodically, so an interrupted run resumes
+ * having lost only the work since the last checkpoint.
  */
 export async function runMigration(options: MigrationOptions): Promise<MigrationSummary> {
   const config = options.config ?? resolveImageConfig();
@@ -117,6 +137,8 @@ export async function runMigration(options: MigrationOptions): Promise<Migration
   const keys = options.limit === undefined ? discovered : discovered.slice(0, options.limit);
   emit({ type: 'discovered', total: keys.length });
 
+  const colliding = findCollidingKeys(keys);
+
   const entries = new Map<string, ManifestEntry>(Object.entries(manifest.entries));
   const failures: MigrationFailure[] = [];
   let processed = 0;
@@ -128,8 +150,6 @@ export async function runMigration(options: MigrationOptions): Promise<Migration
   let completed = 0;
   let sinceCheckpoint = 0;
 
-  // Serialised so that two workers reaching a checkpoint together cannot
-  // interleave their writes and publish a manifest missing the other's entries.
   let checkpointChain: Promise<void> = Promise.resolve();
   const persistCheckpoint = (): Promise<void> => {
     if (dryRun) return Promise.resolve();
@@ -143,6 +163,15 @@ export async function runMigration(options: MigrationOptions): Promise<Migration
   };
 
   const runOne = async (key: string, index: number): Promise<void> => {
+    const { directory, baseName } = parseKey(key);
+    const rivals = colliding.get(`${directory}/${baseName}`);
+    if (rivals !== undefined) {
+      throw new Error(
+        `Derivative name collides with ${rivals.filter((rival) => rival !== key).join(', ')}. ` +
+          'Rename one of these sources so their base names differ.',
+      );
+    }
+
     const source = await storage.get(`${config.originalPrefix}/${key}`);
     if (source === null) {
       throw new Error('Original disappeared between listing and reading.');

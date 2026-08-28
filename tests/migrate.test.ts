@@ -149,6 +149,33 @@ describe('runMigration', () => {
     expect(await storage.exists('original/species/broken.jpg')).toBe(true);
   });
 
+  it('refuses sources whose derivative names would collide', async () => {
+    await storage.put(
+      'original/species/viper.jpg',
+      await gradientJpeg({ width: 900, height: 600 }),
+      {
+        contentType: 'image/jpeg',
+      },
+    );
+    await storage.put(
+      'original/species/viper.png',
+      await gradientPng({ width: 900, height: 600 }),
+      {
+        contentType: 'image/png',
+      },
+    );
+
+    const summary = await runMigration({ storage, config });
+
+    expect(summary.failed).toBe(2);
+    expect(summary.failures.map((failure) => failure.key).sort()).toEqual([
+      'species/viper.jpg',
+      'species/viper.png',
+    ]);
+    expect(summary.failures[0]?.message).toMatch(/collides/);
+    expect(await storage.exists('optimized/species/viper-900.avif')).toBe(false);
+  });
+
   it('emits progress events for every image', async () => {
     const events: string[] = [];
     await runMigration({

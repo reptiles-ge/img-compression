@@ -47,8 +47,6 @@ function encode(pipeline: Sharp, format: DerivativeFormat, config: ImageConfig):
         chromaSubsampling: config.avifChromaSubsampling,
       });
     case 'webp':
-      // WebP is always 4:2:0; smartSubsample spends a little encode time to
-      // avoid the chroma bleed that shows up on saturated scales and plumage.
       return pipeline.webp({
         quality: config.webpQuality,
         effort: config.webpEffort,
@@ -65,6 +63,10 @@ function encode(pipeline: Sharp, format: DerivativeFormat, config: ImageConfig):
  * All metadata except the ICC profile is dropped: EXIF, XMP and IPTC add bytes
  * and can leak capture location, while discarding the colour profile would
  * visibly shift the colours of wide-gamut photography.
+ *
+ * WebP is always 4:2:0, so `smartSubsample` is enabled: it spends a little
+ * encode time to avoid the chroma bleed that shows on saturated scales and
+ * plumage.
  *
  * Nothing is written anywhere; the caller decides what to persist. A rejection
  * therefore leaves no partial output behind.

@@ -44,11 +44,8 @@ const SUBJECTS: readonly Subject[] = [
 
 async function fetchSubject(subject: Subject): Promise<Buffer> {
   const cached = path.join(FIXTURE_DIRECTORY, subject.file);
-  try {
-    return await readFile(cached);
-  } catch {
-    // Not cached yet.
-  }
+  const previouslyFetched = await readFile(cached).catch(() => null);
+  if (previouslyFetched !== null) return previouslyFetched;
 
   const response = await fetch(`${CDN}/${subject.file}`);
   if (!response.ok) {

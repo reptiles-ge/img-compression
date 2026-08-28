@@ -165,7 +165,6 @@ describe('BunnyStorageAdapter', () => {
 
     expect(await adapter.exists('optimized/a-2400.avif')).toBe(true);
     expect(await adapter.exists('optimized/b-2400.avif')).toBe(false);
-    // The second question is answered from the memoised listing.
     expect(requests).toHaveLength(1);
   });
 

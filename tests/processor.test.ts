@@ -26,8 +26,6 @@ describe('processImage', () => {
     expect(result.derivatives.map((derivative) => derivative.format)).toContain('webp');
 
     for (const derivative of result.derivatives) {
-      // libvips reports AVIF under its HEIF container name, distinguished by
-      // the AV1 codec.
       const metadata = await sharp(derivative.data).metadata();
       const container =
         metadata.format === 'heif' && metadata.compression === 'av1' ? 'avif' : metadata.format;
@@ -90,7 +88,6 @@ describe('processImage', () => {
   });
 
   it('applies EXIF orientation so the derivative renders upright', async () => {
-    // Stored 800x1200 portrait, tagged "rotate 90 clockwise": 1200x800 landscape.
     const source = await rotatedJpeg({ width: 800, height: 1200 });
     expect((await sharp(source).metadata()).orientation).toBe(6);
 
@@ -102,8 +99,6 @@ describe('processImage', () => {
       expect(derivative.width).toBeGreaterThan(derivative.height);
       const metadata = await sharp(derivative.data).metadata();
       expect(metadata.width).toBe(derivative.width);
-      // The tag is cleared because the rotation is now baked into the pixels;
-      // leaving both would rotate the image twice.
       expect(metadata.orientation).toBeUndefined();
     }
   });

@@ -88,7 +88,6 @@ function windowSsim(a: Luma, b: Luma, left: number, top: number): number {
     }
   }
 
-  // Sample variance, matching the reference implementation.
   const divisor = count - 1;
   varianceA /= divisor;
   varianceB /= divisor;

@@ -29,6 +29,15 @@ function isQuarterTurn(orientation: number): boolean {
  * throws. Every check runs against the decoded header rather than the file name
  * or a client-supplied content type, both of which are attacker-controlled.
  *
+ * The order matters. Payload size is rejected before libvips is handed
+ * anything, the pixel budget is re-checked after decoding because a header can
+ * advertise plausible sides that multiply out to an unreasonable allocation,
+ * and animated sources are refused rather than silently collapsed to their
+ * first frame.
+ *
+ * A valid header does not prove an image decodes; a truncated JPEG passes here.
+ * Decodability is established by {@link processImage}.
+ *
  * This never returns partially validated data: a throw means nothing downstream
  * should touch the input.
  */
@@ -37,8 +46,6 @@ export async function validateSource(input: Buffer, config: ImageConfig): Promis
     throw new ImageValidationError('INPUT_EMPTY', 'Image input is empty.');
   }
 
-  // Checked before decoding so that an oversized payload is rejected without
-  // ever being handed to libvips.
   if (input.byteLength > config.maxInputBytes) {
     throw new ImageValidationError(
       'INPUT_TOO_LARGE',
@@ -57,8 +64,6 @@ export async function validateSource(input: Buffer, config: ImageConfig): Promis
     throw new ImageValidationError('INPUT_UNREADABLE', 'Image could not be decoded.', { cause });
   }
 
-  // libvips reports AVIF as its HEIF container; the AV1 codec is what actually
-  // distinguishes it, and getting this right keeps the stored content type honest.
   const detected =
     metadata.format === 'heif' && metadata.compression === 'av1' ? 'avif' : metadata.format;
 
@@ -69,8 +74,6 @@ export async function validateSource(input: Buffer, config: ImageConfig): Promis
     );
   }
 
-  // Animated sources would silently collapse to their first frame, which is a
-  // surprising result for a caller who uploaded a GIF or animated WebP.
   if ((metadata.pages ?? 1) > 1) {
     throw new ImageValidationError(
       'ANIMATED_UNSUPPORTED',
@@ -106,9 +109,6 @@ export async function validateSource(input: Buffer, config: ImageConfig): Promis
     );
   }
 
-  // A second, explicit bomb guard. libvips already enforces limitInputPixels
-  // while decoding, but a header can advertise a plausible size per side and
-  // still multiply out to an unreasonable allocation.
   if (width * height > config.maxInputPixels) {
     throw new ImageValidationError(
       'PIXEL_BUDGET_EXCEEDED',

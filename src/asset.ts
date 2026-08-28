@@ -50,10 +50,15 @@ export function toImageAsset(record: OptimizedImageRecord): ImageAsset {
  * Width descriptors let the browser combine the candidate list with `sizes`
  * and its own DPR to pick a file, which is what keeps a phone from downloading
  * the 2400px master.
+ *
+ * Candidates are sorted by width so the string is stable however the caller
+ * assembled the asset. Browsers ignore candidate order, but stable output stays
+ * diffable and cacheable.
  */
 export function srcSetFor(asset: ImageAsset, format: DerivativeFormat): string | null {
   const candidates = asset.sources
     .filter((source) => source.format === format)
+    .sort((a, b) => a.width - b.width)
     .map((source) => `${source.url} ${source.width}w`);
 
   return candidates.length === 0 ? null : candidates.join(', ');

@@ -33,7 +33,10 @@ export interface Manifest {
 }
 
 export function emptyManifest(): Manifest {
-  return { version: MANIFEST_VERSION, entries: {} };
+  return {
+    version: MANIFEST_VERSION,
+    entries: Object.create(null) as Record<string, ManifestEntry>,
+  };
 }
 
 export function hashSource(data: Buffer): string {
@@ -57,6 +60,10 @@ function isManifestEntry(value: unknown): value is ManifestEntry {
  * A corrupt manifest must not stop a migration: the worst consequence of
  * ignoring it is that already-optimised images are regenerated, which is
  * wasteful but produces identical output.
+ *
+ * The returned `entries` object has a null prototype, because these keys come
+ * from storage and one named `__proto__` would otherwise be assigned through
+ * the prototype setter rather than becoming an own property.
  */
 export async function loadManifest(
   storage: StorageAdapter,
@@ -85,7 +92,7 @@ export async function loadManifest(
     const rawEntries = (parsed as { entries?: unknown }).entries;
     if (typeof rawEntries !== 'object' || rawEntries === null) return emptyManifest();
 
-    const entries: Record<string, ManifestEntry> = {};
+    const entries = Object.create(null) as Record<string, ManifestEntry>;
     for (const [entryKey, value] of Object.entries(rawEntries)) {
       if (isManifestEntry(value)) entries[entryKey] = value;
     }
@@ -96,13 +103,15 @@ export async function loadManifest(
   }
 }
 
+/**
+ * Writes the manifest with its keys sorted, so repeated runs produce
+ * byte-identical files and a diff only ever shows genuine changes.
+ */
 export async function saveManifest(
   storage: StorageAdapter,
   key: string,
   manifest: Manifest,
 ): Promise<void> {
-  // Keys are sorted so that repeated runs produce byte-identical manifests and
-  // a diff only ever shows genuine changes.
   const sortedEntries = Object.fromEntries(
     Object.entries(manifest.entries).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
   );

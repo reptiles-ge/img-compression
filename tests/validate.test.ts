@@ -69,9 +69,6 @@ describe('validateSource', () => {
   });
 
   it('accepts a header that only a full decode can disprove', async () => {
-    // A truncated JPEG has a valid header, so header inspection cannot reject
-    // it. This documents the boundary: decodability is established by
-    // processImage, and optimizeAndStore therefore encodes before it stores.
     const source = await gradientJpeg({ width: 1200, height: 800 });
     const truncated = source.subarray(0, Math.floor(source.byteLength / 3));
 
@@ -79,8 +76,6 @@ describe('validateSource', () => {
   });
 
   it('rejects a decompression bomb through the pixel budget', async () => {
-    // 12000x12000 of flat colour compresses to a few kilobytes but would decode
-    // to well over a gigabyte of memory.
     const bomb = await sharp({
       create: { width: 12_000, height: 12_000, channels: 3, background: '#000000' },
     })

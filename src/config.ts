@@ -158,8 +158,6 @@ type MutableConfig = { -readonly [K in keyof ImageConfig]?: ImageConfig[K] };
 function readEnvOverrides(env: ImageConfigEnv): ImageConfigOverrides {
   const overrides: MutableConfig = {};
 
-  // Only defined values are copied, so an unset variable falls through to the
-  // default rather than overwriting it with `undefined`.
   const assign = <K extends keyof ImageConfig>(key: K, value: ImageConfig[K] | undefined): void => {
     if (value !== undefined) overrides[key] = value;
   };

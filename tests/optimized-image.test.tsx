@@ -98,8 +98,6 @@ describe('OptimizedImage', () => {
     expect(html).toContain('decoding="sync"');
     expect(html).not.toContain('loading="lazy"');
 
-    // HTML attribute names are case-insensitive, so React's camelCase output
-    // parses as fetchpriority in the browser.
     expect(html.toLowerCase().split('fetchpriority="high"')).toHaveLength(3);
   });
 

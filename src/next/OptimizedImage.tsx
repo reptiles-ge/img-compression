@@ -90,8 +90,8 @@ export function OptimizedImage({
           width={asset.width}
           height={asset.height}
           loading={priority ? 'eager' : 'lazy'}
-          fetchPriority={priority ? 'high' : 'auto'}
           decoding={priority ? 'sync' : 'async'}
+          {...(priority ? { fetchPriority: 'high' as const } : {})}
           {...(className === undefined ? {} : { className })}
           {...(style === undefined ? {} : { style })}
           {...(id === undefined ? {} : { id })}
