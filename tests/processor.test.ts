@@ -4,6 +4,7 @@ import sharp from 'sharp';
 import { resolveImageConfig } from '../src/config.js';
 import { processImage } from '../src/processor.js';
 import {
+  FAST_ENCODER_SETTINGS,
   gradientJpeg,
   gradientPng,
   jpegWithMetadata,
@@ -13,6 +14,7 @@ import {
 } from './fixtures.js';
 
 const config = resolveImageConfig({}, {});
+const fastConfig = resolveImageConfig(FAST_ENCODER_SETTINGS, {});
 
 describe('processImage', () => {
   it('derives AVIF and WebP from a valid JPEG while leaving the input untouched', async () => {
@@ -70,9 +72,9 @@ describe('processImage', () => {
   });
 
   it('resizes a large image down to the configured maximum width', async () => {
-    const result = await processImage(await noisyJpeg({ width: 4000, height: 3000 }), config);
+    const result = await processImage(await noisyJpeg({ width: 4000, height: 3000 }), fastConfig);
 
-    expect(result.width).toBe(config.maxWidth);
+    expect(result.width).toBe(fastConfig.maxWidth);
     expect(result.height).toBe(1800);
 
     const widths = [...new Set(result.derivatives.map((derivative) => derivative.width))];
@@ -132,8 +134,14 @@ describe('processImage', () => {
   it('honours a configured quality change', async () => {
     const source = await noisyJpeg({ width: 1400, height: 1000 });
 
-    const high = await processImage(source, resolveImageConfig({ avifQuality: 80 }, {}));
-    const low = await processImage(source, resolveImageConfig({ avifQuality: 30 }, {}));
+    const high = await processImage(
+      source,
+      resolveImageConfig({ ...FAST_ENCODER_SETTINGS, avifQuality: 80 }, {}),
+    );
+    const low = await processImage(
+      source,
+      resolveImageConfig({ ...FAST_ENCODER_SETTINGS, avifQuality: 30 }, {}),
+    );
 
     const avifBytes = (result: Awaited<ReturnType<typeof processImage>>): number =>
       result.derivatives.filter((derivative) => derivative.format === 'avif').at(-1)!.byteSize;
