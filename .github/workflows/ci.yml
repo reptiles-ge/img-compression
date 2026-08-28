@@ -47,6 +47,42 @@ jobs:
       - name: Build
         run: npm run build
 
+  install-from-git:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # reptiles.ge consumes this straight from the repository, so a consumer
+      # install is exercised the way they perform it: clone, prepare, pack.
+      # Nothing here reuses the working tree, because the failure this guards
+      # against is dist/ never reaching the tarball.
+      - name: Install this commit as a dependency
+        run: |
+          mkdir -p "$RUNNER_TEMP/consumer"
+          cd "$RUNNER_TEMP/consumer"
+          npm init -y > /dev/null
+          npm pkg set type=module > /dev/null
+          npm install "git+file://$GITHUB_WORKSPACE#$GITHUB_SHA"
+
+      - name: Resolve every entry point
+        run: |
+          cd "$RUNNER_TEMP/consumer"
+          node -e "import('@reptiles-ge/img-compression').then(m => { if (!m.optimizeAndStore) throw new Error('root entry point is missing optimizeAndStore'); })"
+          node -e "import('@reptiles-ge/img-compression/storage').then(m => { if (!m.createStorageFromEnv) throw new Error('storage entry point is missing createStorageFromEnv'); })"
+          ./node_modules/.bin/reptiles-images --help > /dev/null
+
+      # The delivery component is behind an optional peer, so it must resolve
+      # once React is present and must not be required before then.
+      - name: Resolve the delivery component
+        run: |
+          cd "$RUNNER_TEMP/consumer"
+          npm install react react-dom
+          node -e "import('@reptiles-ge/img-compression/next').then(m => { if (!m.OptimizedImage) throw new Error('next entry point is missing OptimizedImage'); })"
+
   audit:
     runs-on: ubuntu-latest
     steps:

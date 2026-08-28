@@ -51,6 +51,7 @@
     "build": "tsc --project tsconfig.build.json",
     "clean": "rm -rf dist",
     "prebuild": "npm run clean",
+    "prepare": "npm run build",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

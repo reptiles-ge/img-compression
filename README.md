@@ -37,12 +37,27 @@ storage adapter ──▶ Bunny Edge Storage ──▶ cdn.reptiles.ge
 
 ## Install
 
+This package is not published to a registry yet, so install it from the
+repository:
+
 ```bash
-npm install @reptiles-ge/img-compression
+npm install github:reptiles-ge/img-compression
 ```
 
+Pin a tag or commit rather than tracking the default branch, so a deploy cannot
+pick up an unreviewed change:
+
+```bash
+npm install github:reptiles-ge/img-compression#v0.1.0
+```
+
+The build runs on `prepare`, so a git install compiles itself and needs no
+extra step.
+
 Requires Node 20.11 or newer. `react` and `next` are optional peers, needed
-only for the delivery component.
+only for the delivery component: importing
+`@reptiles-ge/img-compression/next` without React installed will fail, while
+the processing side works on its own.
 
 ## Optimising an upload
 
