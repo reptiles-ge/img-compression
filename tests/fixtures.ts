@@ -12,6 +12,17 @@ import sharp from 'sharp';
  * own images; these fixtures exist to prove behaviour, not compression ratios.
  */
 
+/**
+ * Encoder settings for tests that assert geometry or behaviour rather than
+ * compression, where effort only buys bytes nothing measures.
+ *
+ * AVIF at the shipped effort takes tens of seconds on a large noisy source,
+ * which is slow enough on a shared CI runner to trip the test timeout. Tests
+ * working on small images keep the real defaults, so the shipped configuration
+ * stays covered.
+ */
+export const FAST_ENCODER_SETTINGS = { avifEffort: 0, webpEffort: 0 } as const;
+
 export interface FixtureOptions {
   readonly width: number;
   readonly height: number;

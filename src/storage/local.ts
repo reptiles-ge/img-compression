@@ -103,22 +103,40 @@ export class LocalStorageAdapter implements StorageAdapter {
     }
   }
 
+  /**
+   * Walks the tree explicitly rather than using `readdir`'s `recursive` option,
+   * because that reports each entry's directory through `Dirent.parentPath`,
+   * which does not exist on every Node release this package supports.
+   *
+   * Symbolic links are not followed: `isDirectory()` is false for a link, so a
+   * link cycle cannot make this recurse forever and a link out of the root
+   * cannot smuggle keys into the listing.
+   */
   async list(prefix: string): Promise<string[]> {
-    const directory = prefix === '' ? this.#root : this.#resolve(prefix);
+    const root = prefix === '' ? this.#root : this.#resolve(prefix);
+    const found: string[] = [];
 
-    let entries;
+    const walk = async (directory: string): Promise<void> => {
+      const entries = await readdir(directory, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const absolute = path.join(directory, entry.name);
+        if (entry.isDirectory()) {
+          await walk(absolute);
+        } else if (entry.isFile()) {
+          found.push(path.relative(this.#root, absolute).split(path.sep).join('/'));
+        }
+      }
+    };
+
     try {
-      entries = await readdir(directory, { recursive: true, withFileTypes: true });
+      await walk(root);
     } catch (cause) {
       if (isNotFound(cause)) return [];
       throw new StorageError(`Failed to list "${prefix}".`, { cause });
     }
 
-    return entries
-      .filter((entry) => entry.isFile())
-      .map((entry) => path.relative(this.#root, path.join(entry.parentPath, entry.name)))
-      .map((relative) => relative.split(path.sep).join('/'))
-      .sort();
+    return found.sort();
   }
 
   urlFor(key: string): string {
