@@ -8,10 +8,30 @@ const asset: ImageAsset = {
   width: 2400,
   height: 1600,
   sources: [
-    { format: 'avif', url: 'https://cdn.reptiles.ge/optimized/viper-1200.avif', width: 1200, height: 800 },
-    { format: 'webp', url: 'https://cdn.reptiles.ge/optimized/viper-1200.webp', width: 1200, height: 800 },
-    { format: 'avif', url: 'https://cdn.reptiles.ge/optimized/viper-2400.avif', width: 2400, height: 1600 },
-    { format: 'webp', url: 'https://cdn.reptiles.ge/optimized/viper-2400.webp', width: 2400, height: 1600 },
+    {
+      format: 'avif',
+      url: 'https://cdn.reptiles.ge/optimized/viper-1200.avif',
+      width: 1200,
+      height: 800,
+    },
+    {
+      format: 'webp',
+      url: 'https://cdn.reptiles.ge/optimized/viper-1200.webp',
+      width: 1200,
+      height: 800,
+    },
+    {
+      format: 'avif',
+      url: 'https://cdn.reptiles.ge/optimized/viper-2400.avif',
+      width: 2400,
+      height: 1600,
+    },
+    {
+      format: 'webp',
+      url: 'https://cdn.reptiles.ge/optimized/viper-2400.webp',
+      width: 2400,
+      height: 1600,
+    },
   ],
   fallbackUrl: 'https://cdn.reptiles.ge/original/viper.jpg',
 };

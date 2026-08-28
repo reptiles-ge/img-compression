@@ -8,7 +8,17 @@ import { optimizeAndStore, planOptimization } from './pipeline.js';
 import type { StorageAdapter } from './storage/types.js';
 
 /** File extensions treated as candidate originals during a migration. */
-const IMAGE_EXTENSIONS = new Set(['jpg', 'jpeg', 'png', 'webp', 'avif', 'tif', 'tiff', 'heic', 'heif']);
+const IMAGE_EXTENSIONS = new Set([
+  'jpg',
+  'jpeg',
+  'png',
+  'webp',
+  'avif',
+  'tif',
+  'tiff',
+  'heic',
+  'heif',
+]);
 
 /** Manifest is checkpointed this often so a crash costs limited rework. */
 const CHECKPOINT_INTERVAL = 25;

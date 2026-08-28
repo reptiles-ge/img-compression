@@ -146,7 +146,9 @@ function reportSummary(summary: MigrationSummary): void {
     console.log('');
     console.log('Failures:');
     for (const failure of summary.failures) {
-      console.log(`  ${failure.key}: ${failure.message}${failure.code === null ? '' : ` [${failure.code}]`}`);
+      console.log(
+        `  ${failure.key}: ${failure.message}${failure.code === null ? '' : ` [${failure.code}]`}`,
+      );
     }
   }
 }
@@ -162,7 +164,9 @@ async function main(): Promise<number> {
   const storage = createStorageFromEnv();
 
   if (!config.enabled && !parsed.dryRun) {
-    console.error('IMAGE_PROCESSING_ENABLED is false; refusing to run a migration that would derive nothing.');
+    console.error(
+      'IMAGE_PROCESSING_ENABLED is false; refusing to run a migration that would derive nothing.',
+    );
     return 1;
   }
 

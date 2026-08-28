@@ -17,12 +17,20 @@ describe('runMigration', () => {
     directory = await createTemporaryDirectory();
     storage = new LocalStorageAdapter({ root: directory.path });
 
-    await storage.put('original/species/viper.jpg', await gradientJpeg({ width: 2000, height: 1400 }), {
-      contentType: 'image/jpeg',
-    });
-    await storage.put('original/species/gecko.png', await gradientPng({ width: 900, height: 600 }), {
-      contentType: 'image/png',
-    });
+    await storage.put(
+      'original/species/viper.jpg',
+      await gradientJpeg({ width: 2000, height: 1400 }),
+      {
+        contentType: 'image/jpeg',
+      },
+    );
+    await storage.put(
+      'original/species/gecko.png',
+      await gradientPng({ width: 900, height: 600 }),
+      {
+        contentType: 'image/png',
+      },
+    );
     await storage.put('original/notes.txt', Buffer.from('not an image', 'utf8'), {
       contentType: 'text/plain',
     });
@@ -124,9 +132,13 @@ describe('runMigration', () => {
   });
 
   it('reports a failure without aborting the rest of the run', async () => {
-    await storage.put('original/species/broken.jpg', Buffer.from('\xff\xd8\xff not really', 'binary'), {
-      contentType: 'image/jpeg',
-    });
+    await storage.put(
+      'original/species/broken.jpg',
+      Buffer.from('\xff\xd8\xff not really', 'binary'),
+      {
+        contentType: 'image/jpeg',
+      },
+    );
 
     const summary = await runMigration({ storage, config });
 

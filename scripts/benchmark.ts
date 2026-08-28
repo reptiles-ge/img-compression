@@ -151,7 +151,9 @@ async function reportCurrentConfiguration(subjects: Map<Subject, Buffer>): Promi
         `${measurement.sourceWidth}x${measurement.sourceHeight}`.padStart(12),
         formatBytes(measurement.avifBytes).padStart(9),
         formatBytes(measurement.webpBytes).padStart(9),
-        `${(100 - (measurement.avifBytes / measurement.sourceBytes) * 100).toFixed(0)}%`.padStart(7),
+        `${(100 - (measurement.avifBytes / measurement.sourceBytes) * 100).toFixed(0)}%`.padStart(
+          7,
+        ),
         measurement.avifSsim.toFixed(4).padStart(10),
         measurement.webpSsim.toFixed(4).padStart(10),
       ].join(' '),
@@ -164,8 +166,7 @@ async function reportCurrentConfiguration(subjects: Map<Subject, Buffer>): Promi
   const sourceTotal = total((m) => m.sourceBytes);
   const avifTotal = total((m) => m.avifBytes);
   const webpTotal = total((m) => m.webpBytes);
-  const average = (pick: (m: Measurement) => number): number =>
-    total(pick) / measurements.length;
+  const average = (pick: (m: Measurement) => number): number => total(pick) / measurements.length;
 
   console.log('-'.repeat(header.length));
   console.log(
@@ -220,9 +221,13 @@ async function sweep(subjects: Map<Subject, Buffer>): Promise<void> {
     console.log(
       `${candidate.label.padEnd(18)} ` +
         `${formatBytes(average((m) => m.avifBytes)).padStart(10)} ` +
-        `${average((m) => m.avifSsim).toFixed(4).padStart(8)} ` +
+        `${average((m) => m.avifSsim)
+          .toFixed(4)
+          .padStart(8)} ` +
         `${formatBytes(average((m) => m.webpBytes)).padStart(10)} ` +
-        `${average((m) => m.webpSsim).toFixed(4).padStart(8)}`,
+        `${average((m) => m.webpSsim)
+          .toFixed(4)
+          .padStart(8)}`,
     );
   }
 }

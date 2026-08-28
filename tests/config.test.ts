@@ -50,7 +50,10 @@ describe('resolveImageConfig', () => {
       ['empty prefix', () => resolveImageConfig({ originalPrefix: '  ' })],
       ['traversal in prefix', () => resolveImageConfig({ originalPrefix: '../escape' })],
       ['traversal inside prefix', () => resolveImageConfig({ optimizedPrefix: 'web/../../etc' })],
-      ['prefix with a separator we do not accept', () => resolveImageConfig({ originalPrefix: 'a\\b' })],
+      [
+        'prefix with a separator we do not accept',
+        () => resolveImageConfig({ originalPrefix: 'a\\b' }),
+      ],
     ];
 
     for (const [label, run] of cases) {

@@ -12,9 +12,7 @@ export const SUPPORTED_INPUT_FORMATS = ['jpeg', 'png', 'webp', 'avif', 'tiff', '
 export type SupportedInputFormat = (typeof SUPPORTED_INPUT_FORMATS)[number];
 
 export function isSupportedInputFormat(format: string | undefined): format is SupportedInputFormat {
-  return (
-    format !== undefined && (SUPPORTED_INPUT_FORMATS as readonly string[]).includes(format)
-  );
+  return format !== undefined && (SUPPORTED_INPUT_FORMATS as readonly string[]).includes(format);
 }
 
 export const MIME_TYPES: Readonly<Record<DerivativeFormat, string>> = {

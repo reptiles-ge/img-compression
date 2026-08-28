@@ -29,9 +29,8 @@ describe('processImage', () => {
       // libvips reports AVIF under its HEIF container name, distinguished by
       // the AV1 codec.
       const metadata = await sharp(derivative.data).metadata();
-      const container = metadata.format === 'heif' && metadata.compression === 'av1'
-        ? 'avif'
-        : metadata.format;
+      const container =
+        metadata.format === 'heif' && metadata.compression === 'av1' ? 'avif' : metadata.format;
       expect(container).toBe(derivative.format);
     }
   });

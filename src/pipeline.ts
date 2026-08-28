@@ -1,5 +1,15 @@
-import { configFingerprint, resolveImageConfig, targetWidthsFor, type ImageConfig } from './config.js';
-import { DERIVATIVE_FORMATS, INPUT_MIME_TYPES, MIME_TYPES, type DerivativeFormat } from './formats.js';
+import {
+  configFingerprint,
+  resolveImageConfig,
+  targetWidthsFor,
+  type ImageConfig,
+} from './config.js';
+import {
+  DERIVATIVE_FORMATS,
+  INPUT_MIME_TYPES,
+  MIME_TYPES,
+  type DerivativeFormat,
+} from './formats.js';
 import {
   hashSource,
   isEntryFresh,

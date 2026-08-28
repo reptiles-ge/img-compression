@@ -15,7 +15,10 @@ export function assertSafeKey(key: string): string {
     throw new ImageValidationError('UNSAFE_KEY', 'Storage key must not be empty.');
   }
   if (CONTROL_CHARACTERS.test(key)) {
-    throw new ImageValidationError('UNSAFE_KEY', 'Storage key must not contain control characters.');
+    throw new ImageValidationError(
+      'UNSAFE_KEY',
+      'Storage key must not contain control characters.',
+    );
   }
   if (key.includes('\\')) {
     throw new ImageValidationError('UNSAFE_KEY', 'Storage key must use "/" as its separator.');
@@ -33,7 +36,10 @@ export function assertSafeKey(key: string): string {
       throw new ImageValidationError('UNSAFE_KEY', 'Storage key must not contain empty segments.');
     }
     if (segment === '.' || segment === '..') {
-      throw new ImageValidationError('UNSAFE_KEY', 'Storage key must not contain traversal segments.');
+      throw new ImageValidationError(
+        'UNSAFE_KEY',
+        'Storage key must not contain traversal segments.',
+      );
     }
   }
 

@@ -109,9 +109,11 @@ export async function processImage(input: Buffer, config: ImageConfig): Promise<
 async function encodeAll(resized: Sharp, config: ImageConfig): Promise<Derivative[]> {
   return Promise.all(
     DERIVATIVE_FORMATS.map(async (format) => {
-      const { data, info } = await encode(resized.clone().keepIccProfile(), format, config).toBuffer(
-        { resolveWithObject: true },
-      );
+      const { data, info } = await encode(
+        resized.clone().keepIccProfile(),
+        format,
+        config,
+      ).toBuffer({ resolveWithObject: true });
 
       return {
         format,

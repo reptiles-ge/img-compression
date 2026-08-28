@@ -142,7 +142,10 @@ function normalizePrefix(name: string, prefix: string): string {
   if (trimmed === '') {
     throw new ConfigurationError(`${name} must not be empty.`);
   }
-  if (!/^[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*$/.test(trimmed) || trimmed.split('/').includes('..')) {
+  if (
+    !/^[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*$/.test(trimmed) ||
+    trimmed.split('/').includes('..')
+  ) {
     throw new ConfigurationError(
       `${name} must be a relative slash-separated path of [A-Za-z0-9._-] segments.`,
     );

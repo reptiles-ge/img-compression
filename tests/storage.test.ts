@@ -12,7 +12,10 @@ describe('LocalStorageAdapter', () => {
 
   beforeEach(async () => {
     directory = await createTemporaryDirectory();
-    storage = new LocalStorageAdapter({ root: directory.path, baseUrl: 'https://cdn.example.test/' });
+    storage = new LocalStorageAdapter({
+      root: directory.path,
+      baseUrl: 'https://cdn.example.test/',
+    });
   });
 
   afterEach(async () => {
@@ -101,9 +104,7 @@ describe('BunnyStorageAdapter', () => {
     });
 
     expect(requests).toHaveLength(1);
-    expect(requests[0]?.url).toBe(
-      'https://storage.bunnycdn.com/reptiles/optimized/a-2400.avif',
-    );
+    expect(requests[0]?.url).toBe('https://storage.bunnycdn.com/reptiles/optimized/a-2400.avif');
     expect(requests[0]?.method).toBe('PUT');
     expect(requests[0]?.headers['AccessKey']).toBe('super-secret-key');
     expect(requests[0]?.headers['Content-Type']).toBe('image/avif');
@@ -119,7 +120,9 @@ describe('BunnyStorageAdapter', () => {
     let attempts = 0;
     const { adapter } = bunnyWithResponses(() => {
       attempts += 1;
-      return attempts < 3 ? new Response(null, { status: 503 }) : new Response(null, { status: 201 });
+      return attempts < 3
+        ? new Response(null, { status: 503 })
+        : new Response(null, { status: 201 });
     });
 
     await adapter.put('a.avif', Buffer.from('x'), { contentType: 'image/avif' });

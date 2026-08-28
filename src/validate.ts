@@ -32,10 +32,7 @@ function isQuarterTurn(orientation: number): boolean {
  * This never returns partially validated data: a throw means nothing downstream
  * should touch the input.
  */
-export async function validateSource(
-  input: Buffer,
-  config: ImageConfig,
-): Promise<ValidatedSource> {
+export async function validateSource(input: Buffer, config: ImageConfig): Promise<ValidatedSource> {
   if (input.byteLength === 0) {
     throw new ImageValidationError('INPUT_EMPTY', 'Image input is empty.');
   }

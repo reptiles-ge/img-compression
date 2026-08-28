@@ -15,7 +15,10 @@ describe('optimizeAndStore', () => {
 
   beforeEach(async () => {
     directory = await createTemporaryDirectory();
-    storage = new LocalStorageAdapter({ root: directory.path, baseUrl: 'https://cdn.example.test' });
+    storage = new LocalStorageAdapter({
+      root: directory.path,
+      baseUrl: 'https://cdn.example.test',
+    });
   });
 
   afterEach(async () => {
