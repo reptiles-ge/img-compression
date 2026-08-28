@@ -60,7 +60,12 @@ export async function validateSource(
     throw new ImageValidationError('INPUT_UNREADABLE', 'Image could not be decoded.', { cause });
   }
 
-  if (!isSupportedInputFormat(metadata.format)) {
+  // libvips reports AVIF as its HEIF container; the AV1 codec is what actually
+  // distinguishes it, and getting this right keeps the stored content type honest.
+  const detected =
+    metadata.format === 'heif' && metadata.compression === 'av1' ? 'avif' : metadata.format;
+
+  if (!isSupportedInputFormat(detected)) {
     throw new ImageValidationError(
       'UNSUPPORTED_FORMAT',
       `Image format "${metadata.format ?? 'unknown'}" is not supported.`,
@@ -115,7 +120,7 @@ export async function validateSource(
   }
 
   return {
-    format: metadata.format,
+    format: detected,
     width,
     height,
     byteSize: input.byteLength,

@@ -101,13 +101,20 @@ function buildRecord(
 }
 
 /**
- * Validates untrusted bytes, keeps the original intact, derives AVIF and WebP
- * at every applicable width, and stores the results.
+ * Validates untrusted bytes, derives AVIF and WebP at every applicable width,
+ * and stores the original alongside them.
  *
- * The original is written before any derivative, so a failure during encoding
- * or upload leaves the canonical source safely in place and the operation can
- * simply be retried. Derivatives are only written once every encode has
- * succeeded, so a partial set is never published.
+ * Encoding happens before anything is written. Header validation alone cannot
+ * prove an image decodes -- a truncated JPEG has a perfectly valid header --
+ * so only a full decode establishes that the bytes are a real image. Storing
+ * the original first would mean publishing unverified, attacker-supplied bytes
+ * to a public CDN and leaving an asset behind that every later run fails on.
+ *
+ * The consequence is that a failed call stores nothing at all, and never
+ * deletes or modifies anything either: the caller still holds the source bytes
+ * and receives a typed error describing what went wrong. Once encoding has
+ * succeeded, the original is written before its derivatives, so a partial set
+ * is never published without its canonical source.
  */
 export async function optimizeAndStore(input: OptimizeInput): Promise<OptimizeResult> {
   const config = input.config ?? resolveImageConfig();
@@ -128,16 +135,14 @@ export async function optimizeAndStore(input: OptimizeInput): Promise<OptimizeRe
     return { status: 'skipped', record: buildRecord(key, existing, storage), entry: existing };
   }
 
-  if (storeOriginal) {
-    // Deliberately ahead of any processing: the canonical asset must survive an
-    // encoder failure, and a retry then has a source to work from.
-    const probe = await validateSource(input.source, config);
-    await storage.put(targetOriginalKey, input.source, {
-      contentType: INPUT_MIME_TYPES[probe.format],
-    });
-  }
-
   if (!config.enabled) {
+    const probe = await validateSource(input.source, config);
+    if (storeOriginal) {
+      await storage.put(targetOriginalKey, input.source, {
+        contentType: INPUT_MIME_TYPES[probe.format],
+      });
+    }
+
     const entry: ManifestEntry = {
       sourceHash,
       configFingerprint: fingerprint,
@@ -156,6 +161,12 @@ export async function optimizeAndStore(input: OptimizeInput): Promise<OptimizeRe
   }
 
   const processed = await processImage(input.source, config);
+
+  if (storeOriginal) {
+    await storage.put(targetOriginalKey, input.source, {
+      contentType: INPUT_MIME_TYPES[processed.source.format],
+    });
+  }
 
   const stored: ManifestDerivative[] = [];
   for (const derivative of processed.derivatives) {
