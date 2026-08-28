@@ -119,6 +119,7 @@ and running it twice re-encodes nothing. See
 | [docs/architecture.md](docs/architecture.md)       | How the pipeline fits together, and the decisions behind it |
 | [docs/configuration.md](docs/configuration.md)     | Every setting and environment variable                      |
 | [docs/frontend.md](docs/frontend.md)               | Using the component, LCP, lazy loading and CLS              |
+| [docs/og-images.md](docs/og-images.md)             | Social previews, and why they are JPEG rather than AVIF     |
 | [docs/migration.md](docs/migration.md)             | Processing existing images safely                           |
 | [docs/benchmarks.md](docs/benchmarks.md)           | Measured results and how the defaults were chosen           |
 | [docs/troubleshooting.md](docs/troubleshooting.md) | What the errors mean and what to do about them              |
