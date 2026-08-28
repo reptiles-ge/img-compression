@@ -33,13 +33,27 @@ export interface ImageConfig {
   readonly optimizedPrefix: string;
 }
 
+/**
+ * Defaults chosen from measurements against the site's own photography rather
+ * than from convention; `docs/benchmarks.md` records the numbers.
+ *
+ * AVIF quality 60 is where mean SSIM crosses 0.98 across the sample, the point
+ * generally treated as visually transparent for photographs. Dropping to 55
+ * saves about 19% more bytes but falls to 0.976, and climbing to 65 costs 12%
+ * more bytes for 0.003 of SSIM. 4:4:4 chroma is kept because 4:2:0 saved only
+ * 3% while risking exactly the saturated greens and reds this site publishes,
+ * and because SSIM measures luma only and so cannot see that damage.
+ *
+ * WebP quality 82 sits deliberately above the usual 80 so the browsers that
+ * cannot decode AVIF are not left with a visibly worse image.
+ */
 export const DEFAULT_IMAGE_CONFIG: ImageConfig = {
   maxWidth: 2400,
   additionalWidths: [1200],
-  avifQuality: 55,
+  avifQuality: 60,
   avifEffort: 4,
   avifChromaSubsampling: '4:4:4',
-  webpQuality: 80,
+  webpQuality: 82,
   webpEffort: 5,
   enabled: true,
   maxInputBytes: 40 * 1024 * 1024,

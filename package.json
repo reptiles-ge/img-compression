@@ -60,7 +60,8 @@
     "test:watch": "vitest",
     "images:optimize": "tsx src/cli/optimize.ts",
     "images:validate": "tsx src/cli/optimize.ts --dry-run",
-    "images:benchmark": "tsx scripts/benchmark.ts"
+    "images:benchmark": "tsx scripts/benchmark.ts",
+    "images:measure-live": "tsx scripts/measure-live-pages.ts"
   },
   "dependencies": {
     "sharp": "^0.35.4"
