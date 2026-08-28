@@ -1,0 +1,43 @@
+name: Bug report
+description: Something in the pipeline behaves incorrectly.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If this is a security issue, please do not file it here.
+        See [SECURITY.md](../../SECURITY.md) for private reporting.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you expected, and what you got instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: |
+        The command or code you ran. If a particular image triggers it, describe
+        its format and dimensions rather than attaching it.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: configuration
+    attributes:
+      label: Configuration
+      description: Relevant IMAGE_* settings. Do not paste credentials.
+      render: shell
+
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Output of `node -v` and the package version.
+    validations:
+      required: true

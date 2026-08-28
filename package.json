@@ -1,0 +1,98 @@
+{
+  "name": "@reptiles-ge/img-compression",
+  "version": "0.1.0",
+  "description": "Native image compression for Reptiles.ge: Sharp-based AVIF/WebP pipeline with pluggable storage and responsive delivery.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20.11"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reptiles-ge/img-compression.git"
+  },
+  "bugs": {
+    "url": "https://github.com/reptiles-ge/img-compression/issues"
+  },
+  "homepage": "https://github.com/reptiles-ge/img-compression#readme",
+  "keywords": [
+    "image",
+    "optimization",
+    "avif",
+    "webp",
+    "sharp",
+    "nextjs",
+    "bunnycdn"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./storage": {
+      "types": "./dist/storage/index.d.ts",
+      "default": "./dist/storage/index.js"
+    },
+    "./next": {
+      "types": "./dist/next/index.d.ts",
+      "default": "./dist/next/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "bin": {
+    "reptiles-images": "./dist/cli/optimize.js"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "images:optimize": "tsx src/cli/optimize.ts",
+    "images:validate": "tsx src/cli/optimize.ts --dry-run",
+    "images:benchmark": "tsx scripts/benchmark.ts",
+    "images:measure-live": "tsx scripts/measure-live-pages.ts"
+  },
+  "dependencies": {
+    "sharp": "^0.35.4"
+  },
+  "peerDependencies": {
+    "next": ">=14",
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/node": "^22.19.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.5",
+    "eslint": "^9.39.1",
+    "prettier": "^3.6.2",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "tsx": "^4.20.7",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.47.2",
+    "vitest": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
