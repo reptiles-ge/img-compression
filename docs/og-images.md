@@ -119,16 +119,16 @@ or `crop: 'entropy'` for the busiest region rather than the most salient one.
 
 ## Configuration
 
-| Variable               | Default     | Meaning                                   |
-| ---------------------- | ----------- | ----------------------------------------- |
-| `OG_IMAGE_WIDTH`       | `1200`      | Card width.                               |
+| Variable               | Default     | Meaning                                 |
+| ---------------------- | ----------- | --------------------------------------- |
+| `OG_IMAGE_WIDTH`       | `1200`      | Card width.                             |
 | `OG_IMAGE_HEIGHT`      | `630`       | Card height. Leave this at the default. |
-| `OG_IMAGE_QUALITY`     | `82`        | Starting JPEG quality.                    |
-| `OG_IMAGE_MIN_QUALITY` | `62`        | Floor for the budget search.              |
-| `OG_IMAGE_MAX_BYTES`   | `300000`    | The WhatsApp ceiling.                     |
-| `OG_IMAGE_CROP`        | `attention` | `attention`, `entropy` or `centre`.       |
-| `OG_IMAGE_BACKGROUND`  | `#ffffff`   | Used when flattening transparency.        |
-| `OG_IMAGE_PREFIX`      | `og`        | Where previews are stored.                |
+| `OG_IMAGE_QUALITY`     | `82`        | Starting JPEG quality.                  |
+| `OG_IMAGE_MIN_QUALITY` | `62`        | Floor for the budget search.            |
+| `OG_IMAGE_MAX_BYTES`   | `300000`    | The WhatsApp ceiling.                   |
+| `OG_IMAGE_CROP`        | `attention` | `attention`, `entropy` or `centre`.     |
+| `OG_IMAGE_BACKGROUND`  | `#ffffff`   | Used when flattening transparency.      |
+| `OG_IMAGE_PREFIX`      | `og`        | Where previews are stored.              |
 
 These are resolved separately from the main image settings on purpose: changing
 the preview quality does not alter the derivative fingerprint, so it will not
