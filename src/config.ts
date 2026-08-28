@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 
+import { assertRange, normalizePrefix, parseBoolean, parseInteger, parseWidthList } from './env.js';
 import { ConfigurationError } from './errors.js';
 
 /**
@@ -85,40 +86,6 @@ export interface ImageConfigEnv {
   IMAGE_OPTIMIZED_PREFIX?: string | undefined;
 }
 
-function parseInteger(name: string, raw: string | undefined): number | undefined {
-  if (raw === undefined || raw.trim() === '') return undefined;
-  const value = Number(raw.trim());
-  if (!Number.isInteger(value)) {
-    throw new ConfigurationError(`${name} must be an integer, received "${raw}".`);
-  }
-  return value;
-}
-
-function parseBoolean(name: string, raw: string | undefined): boolean | undefined {
-  if (raw === undefined || raw.trim() === '') return undefined;
-  const value = raw.trim().toLowerCase();
-  if (['1', 'true', 'yes', 'on'].includes(value)) return true;
-  if (['0', 'false', 'no', 'off'].includes(value)) return false;
-  throw new ConfigurationError(`${name} must be a boolean, received "${raw}".`);
-}
-
-function parseWidthList(name: string, raw: string | undefined): number[] | undefined {
-  if (raw === undefined || raw.trim() === '') return undefined;
-  return raw
-    .split(',')
-    .map((part) => part.trim())
-    .filter((part) => part !== '')
-    .map((part) => {
-      const value = Number(part);
-      if (!Number.isInteger(value)) {
-        throw new ConfigurationError(
-          `${name} must be a comma-separated list of integers, received "${raw}".`,
-        );
-      }
-      return value;
-    });
-}
-
 function parseChromaSubsampling(
   name: string,
   raw: string | undefined,
@@ -129,28 +96,6 @@ function parseChromaSubsampling(
     throw new ConfigurationError(`${name} must be "4:4:4" or "4:2:0", received "${raw}".`);
   }
   return value;
-}
-
-function assertRange(name: string, value: number, min: number, max: number): void {
-  if (!Number.isInteger(value) || value < min || value > max) {
-    throw new ConfigurationError(`${name} must be an integer between ${min} and ${max}.`);
-  }
-}
-
-function normalizePrefix(name: string, prefix: string): string {
-  const trimmed = prefix.trim().replace(/^\/+|\/+$/g, '');
-  if (trimmed === '') {
-    throw new ConfigurationError(`${name} must not be empty.`);
-  }
-  if (
-    !/^[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*$/.test(trimmed) ||
-    trimmed.split('/').includes('..')
-  ) {
-    throw new ConfigurationError(
-      `${name} must be a relative slash-separated path of [A-Za-z0-9._-] segments.`,
-    );
-  }
-  return trimmed;
 }
 
 type MutableConfig = { -readonly [K in keyof ImageConfig]?: ImageConfig[K] };

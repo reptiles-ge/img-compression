@@ -75,6 +75,24 @@ export {
 
 export { validateSource, type ValidatedSource } from './validate.js';
 
+export {
+  DEFAULT_OG_IMAGE_CONFIG,
+  OG_IMAGE_CONTENT_TYPE,
+  ogImageDescriptor,
+  ogImageKey,
+  ogImageMetaTags,
+  renderAndStoreOgImage,
+  renderOgImage,
+  resolveOgImageConfig,
+  type MetaTag,
+  type OgImage,
+  type OgImageConfig,
+  type OgImageConfigEnv,
+  type OgImageConfigOverrides,
+  type OgImageDescriptor,
+  type StoredOgImage,
+} from './og.js';
+
 export { srcSetFor, toImageAsset, type ImageAsset, type ImageAssetSource } from './asset.js';
 
 export {
